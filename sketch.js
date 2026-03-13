@@ -1,6 +1,8 @@
 let magicLevel = 0; 
 let isBursting = false; 
 let trail = [] //array
+let starCount=0 //i want to use count to see when is the timing for the magic to happen. 
+let magicTriggered=false
 
 function setup() {
   // make canvas as windowsize
@@ -34,6 +36,29 @@ function triggerMagicBurst() {
 
 function draw() {
   background(10, 15, 30); // Deep blue
+// added the star count, only if it reaches certian count, let the magic happen
+  if (!magicTriggered){
+    let newStar={
+        x:mouseX,
+        y:mouseY,
+        alpha:255
+        size: random(8,20)
+    };
+    trail.push(newStar);
+    starCount++;
+
+    if (trail.length>50) trail.shifft();
+  }
+//more than 100 traiggers
+  if (starCount>100){
+    magicTriggered=true;
+  }
+  drawTrail();
+  drawMatch(mouseX,mouseY);
+
+  if (magicTriggered){
+    drawThaiFood(width/2,height/2); 
+  }
 
   // DRAW THE MATCH
   drawMatch(mouseX, mouseY);
