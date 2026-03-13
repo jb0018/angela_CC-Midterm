@@ -50,11 +50,17 @@ function draw() {
   
 //set up the logic
 
-  if (starCount>650){
+  if (starCount > 900) {
+    magicStage = 7; // Chopsticks
+  } else if (starCount > 800) {
+    magicStage = 6; // Thai Iced Tea
+  } else if (starCount > 650) {
+    magicStage = 5; // STEAM (The new addition)
+   } else if (starCount>550){
     magicStage=4; //meat/tofu
-  } else if (starCount > 500) {
+  } else if (starCount > 450) {
     magicStage =3; // Veggies
-  } else if (starCount > 350) {
+  } else if (starCount > 300) {
     magicStage = 2; // Noodles
   } else if (starCount > 200) {
     magicStage = 1; // Bowl
@@ -90,13 +96,14 @@ function drawTrail() {
 function drawMatch(x, y) {
   push();
   translate(x, y);
-  stroke(250, 200, 125);
+  rotate(radians(30)); //didn't like the match to be perfectly straight
+  stroke(270, 225, 125);
   strokeWeight(4);
   line(0, 0, 0, 40); // The stick
   
   noStroke();
   fill(255, 100, 0); 
-  ellipse(0, 0, 12, 14); // The head
+  ellipse(0, 0, 14, 16); // The head
   pop();
 }
 
@@ -127,9 +134,9 @@ if (stage >= 1) {
       beginShape();
       // Using curves instead for the shape
       curveVertex(x1, yStrand - 20);
-      curveVertex(x1 + random(-5,5), yStrand); 
-      curveVertex(0 + random(-10,10), yStrand + random(-10,10)); 
-      curveVertex(x2 + random(-5,5), yStrand); 
+      curveVertex(x1 + random(-5,5), yStrand);  //random position assign within the given range so will have a vibrating effect. reference found using the online vocabulary
+      curveVertex(0 + random(-2,2), yStrand + random(-2,2)); 
+      curveVertex(x2 + random(-7,7), yStrand); 
       curveVertex(x2, yStrand - 20); 
       endShape();
     }
@@ -151,10 +158,47 @@ if (stage >= 1) {
     fill(230, 170, 150); // Tofu color
     rectMode(CENTER);
     square(-10, 5, 20);
-    square(25, 10, 18);
+    square(0, 10, 18);
     square(5, -15, 15);
      square(20, 15, 19);
      square(15, 5, 18);
+  }
+  //stage 5 the steam
+  if (stage>=5){
+    stroke(255,255,255,80);
+    strokeWeight(2);
+    noFill();
+
+    for (let s =0; s<3; s++){
+    let xOffset = -40+(s*40);
+    //googled how to create left and right movement 
+    let steam = sin(frameCount*0.05+s)*10;
+beginShape();
+curveVertex(xOffset + steam, -30); 
+      curveVertex(xOffset + steam, -40);
+      curveVertex(xOffset - steam, -70); 
+      curveVertex(xOffset + steam, -100); 
+      curveVertex(xOffset, -110); // End
+      endShape();
+  }
+}
+  noStroke();
+
+  //stage 6 the beverage
+  if (stage >= 6) {
+    rect(130, -60, 45, 90, 5);
+    fill(255, 140, 0);
+    rect(135, -35, 35, 60, 2);
+    fill(255, 255, 255, 200); 
+    rect(135, -45, 35, 12, 2);
+  }
+
+  //stage 7 chopsticks
+  if (stage>=7){
+    stroke(80, 50, 20); 
+    strokeWeight(5);
+    line(-70, -30, 70, -80);
+    line(-60, -45, 80, -90);
   }
   pop();
 }
