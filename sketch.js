@@ -5,6 +5,8 @@ let starCount=0 //i want to use count to see when is the timing for the magic to
 let magicStage=0; // i plan to have different stage, more star count add more elements to the food, step by step
 let puffs=[];
 let lastStage=0; 
+let onFire=false;
+let fireTimer=0;
 
 function setup() {
   // make canvas as windowsize
@@ -18,7 +20,8 @@ function windowResized() {
 
 function mouseClicked() { // will change this part to changing different cuisines, so it's like a magic chef. I don't like this blue aura but going to keep it for now
   magicLevel++;
-  // Delay effect
+  onFire=true;
+  fireTimer=40;
   setTimeout(function() { 
     triggerMagicBurst();
   }, 1500); // for 1.5 sec
@@ -81,12 +84,14 @@ drawPuffs();
 
   // Draw the matchstick at cursor
   drawMatch(mouseX, mouseY);
+drawFlame(mouseX,mouseY);
 
   // Draw the blue aura if isBursting is true
   if (isBursting) {
     drawMagicalAura();
   }
 }
+
 
 function drawTrail() {
   for (let i = 0; i < trail.length; i++) {
@@ -119,14 +124,18 @@ function drawStar (x,y,r1,r2,npoints){
 function drawMatch(x, y) {
   push();
   translate(x, y);
-  rotate(radians(30)); //didn't like the match to be perfectly straight
+  if (onFire){
+    rotate(radians(60)); //when on fire, tilted
+  }else{
+    rotate(radians(30)); //normal
+  }
   stroke(270, 225, 125);
   strokeWeight(8);
   line(0, 0, 0, 80); // The stick
-  
+
   noStroke();
   fill(255, 100, 0); 
-  ellipse(0, 0, 28, 32); // The head
+  ellipse(0, 0, 18, 20); // The head
   pop();
 }
 
@@ -137,13 +146,13 @@ function drawMagicalAura() {
 }
 
 function triggerPuff(){
-    for (let i = 0, i<6; i++){
+    for (let i = 0; i<6; i++){
         puffs.push({
             x:width/2,
             y:height/2,
-            size:random(40,100),
+            size:random(80,200),
             alpha: 150,
-            dx:random(-2,2) // let them dirft sideways
+            dx:random(-2,2), // let them dirft sideways
             dy: random(-3,-1) //up and down
         });
     }
@@ -162,6 +171,27 @@ function drawPuffs(){
         if (p.alpha<=0){
             puffs.splice(i,1); //will disappear when they go invisible
         }
+    }
+}
+
+function drawFlame(x,y){
+    if (!onFire)return; //only draw flame if its onfire
+    push();
+    translate(x,y);
+    rotate(radians(60)); 
+    noStroke();
+    fill(255,80,0,fireTimer*4);
+    ellipse(0,-20,35,55); //inner flame
+    fill(255,200,0,fireTimer*5);
+    ellipse(0,-28,22,38);
+    fill(255,255,200,fireTimer*6);
+    ellipse(0,-38,12,22); 
+
+    pop();
+
+    fireTimer--; //count down 
+    if(fireTimer<=0){
+        onFire=false;
     }
 }
 
@@ -240,11 +270,17 @@ curveVertex(xOffset + steam, -30);
 
   //stage 6 the beverage
   if (stage >= 6) {
-    rect(130, -60, 45, 90, 5);
+    fill(255, 220, 180, 180);
+    noStroke();
+    rect(150, -80, 80, 140, 5);
     fill(255, 140, 0);
-    rect(135, -35, 35, 60, 2);
+    rect(156, -50, 68, 95, 2);
     fill(255, 255, 255, 200); 
-    rect(135, -45, 35, 12, 2);
+    rect(156, -75, 68, 30, 2);
+    stroke (220,80,80);
+    strokeWeight(5);
+    line(150,-120,140,40);
+    noStroke(); //straw
   }
 
   //stage 7 chopsticks
