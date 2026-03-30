@@ -14,18 +14,16 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
-function mouseClicked() { // will change this part to changing different cuisines, so it's like a magic chef.
+function mouseClicked() { // will change this part to changing different cuisines, so it's like a magic chef. I don't like this blue aura but going to keep it for now
   magicLevel++;
-  console.log("Match struck!");
   // Delay effect
-  setTimeout(function() {
+  setTimeout(function() { 
     triggerMagicBurst();
   }, 1500); // for 1.5 sec
 }
 
 function triggerMagicBurst() {
   isBursting = true;
-  console.log("The magic manifested!");
   // Disappear after 3 seconds
   setTimeout(function() {
     isBursting = false;
@@ -89,9 +87,25 @@ function drawTrail() {
     let pulse=p.size*(p.alpha/255);
     noStroke();
     fill(255, 200, 50, p.alpha);
-    circle(p.x,p.y,pulse);
+    drawStar(p.x,p.y,pulse/2,pulse,5); //change to star from circle
   }
 }
+
+function drawStar (x,y,r1,r2,npoints){
+    let angle=TWO_PI/npoints;
+    let halfAngle=angle/2;
+    beginShape();
+    for (let a=0; 1<TWO-PI; a+=angle){
+        let sx=x+cos(a)*r2;
+        let sy=y+sin(a)*r2;
+        vertex(sx,sy);
+        sx=x+cos(a+halfAngle)*r1;
+        sy=y+sin(a+halfAngle)*r1;
+        vertex(sx,sy);
+    }
+    endSahpe(CLOSE);
+}
+
 
 function drawMatch(x, y) {
   push();
