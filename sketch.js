@@ -3,6 +3,8 @@ let isBursting = false;
 let trail = [] //array
 let starCount=0 //i want to use count to see when is the timing for the magic to happen. 
 let magicStage=0; // i plan to have different stage, more star count add more elements to the food, step by step
+let puffs=[];
+let lastStage=0; 
 
 function setup() {
   // make canvas as windowsize
@@ -32,7 +34,9 @@ function triggerMagicBurst() {
 
 function draw() {
   background(10, 15, 30); // Deep blue
-// added the star count, only if it reaches certian count, let the magic happen
+// only add stars if mouse is actually moving.
+let moved=dist (mouseX,mouseY,pmouseX,pmouseY);
+if (moved >2){
     let newStar={
         x:mouseX,
         y:mouseY,
@@ -41,10 +45,10 @@ function draw() {
     };
     trail.push(newStar);
     starCount++;
-
+}
     if (trail.length>100) {
     trail.shift();
-    }
+ }
   
 //set up the logic
 
@@ -63,11 +67,16 @@ function draw() {
   } else if (starCount > 200) {
     magicStage = 1; // Bowl
   }
+    if (magicStage>lastStage){
+        triggerPuff();
+        lastStage=magicStage;
+    }
 drawTrail();
+drawPuffs();
   
   if (magicStage > 0) {
     let hover = sin(frameCount * 0.05) * 10;
-    drawThaiFood(width / 2, height / 2 + hover, magicStage); 
+    drawThaiFood(width / 4, height / 4 + hover, magicStage); 
   }
 
   // Draw the matchstick at cursor
@@ -86,7 +95,7 @@ function drawTrail() {
     p.alpha -= 5; 
     let pulse=p.size*(p.alpha/255);
     noStroke();
-    fill(255, 200, 50, p.alpha);
+    fill(255, 255, 255, p.alpha);
     drawStar(p.x,p.y,pulse/2,pulse,5); //change to star from circle
   }
 }
@@ -95,7 +104,7 @@ function drawStar (x,y,r1,r2,npoints){
     let angle=TWO_PI/npoints;
     let halfAngle=angle/2;
     beginShape();
-    for (let a=0; 1<TWO-PI; a+=angle){
+    for (let a=0; a<TWO_PI; a+=angle){
         let sx=x+cos(a)*r2;
         let sy=y+sin(a)*r2;
         vertex(sx,sy);
@@ -103,7 +112,7 @@ function drawStar (x,y,r1,r2,npoints){
         sy=y+sin(a+halfAngle)*r1;
         vertex(sx,sy);
     }
-    endSahpe(CLOSE);
+    endShape(CLOSE);
 }
 
 
@@ -112,12 +121,12 @@ function drawMatch(x, y) {
   translate(x, y);
   rotate(radians(30)); //didn't like the match to be perfectly straight
   stroke(270, 225, 125);
-  strokeWeight(4);
-  line(0, 0, 0, 40); // The stick
+  strokeWeight(8);
+  line(0, 0, 0, 80); // The stick
   
   noStroke();
   fill(255, 100, 0); 
-  ellipse(0, 0, 14, 16); // The head
+  ellipse(0, 0, 28, 32); // The head
   pop();
 }
 
@@ -127,9 +136,40 @@ function drawMagicalAura() {
   circle(mouseX, mouseY, 100);
 }
 
+function triggerPuff(){
+    for (let i = 0, i<6; i++){
+        puffs.push({
+            x:width/2,
+            y:height/2,
+            size:random(40,100),
+            alpha: 150,
+            dx:random(-2,2) // let them dirft sideways
+            dy: random(-3,-1) //up and down
+        });
+    }
+}
+
+function drawPuffs(){
+    noStroke();
+    for (let i = puffs.length-1; i>=0; i--){
+        let p=puffs[i];
+        fill(200,200,200,p.alpha);
+        circle(p.x,p.y,p.size);
+        p.x+=p.dx;
+        p.y+=p.dy;
+        p.alpha-=3;
+        p.size+=1;
+        if (p.alpha<=0){
+            puffs.splice(i,1); //will disappear when they go invisible
+        }
+    }
+}
+
 function drawThaiFood(x,y,stage){
     push()
+    scale (2);
     translate(x,y);
+
 //stage 1
 if (stage >= 1) {
     fill(200, 50, 50); // Bright Red Bowl
